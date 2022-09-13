@@ -17,7 +17,7 @@ demo: build
 	./go-mines
 
 dist:
-	gox -ldflags="-s -w -X main.version=${VERSION}" \
+	gox -ldflags="-s -w -X github.com/jedib0t/go-mines/game.version=${VERSION}" \
 	    -os="linux darwin windows" \
 	    -arch="amd64" \
 	    -output="./dist/{{.Dir}}_{{.OS}}_{{.Arch}}" \

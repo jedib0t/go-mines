@@ -13,7 +13,7 @@ var (
 	// game state
 	cursor   = minefield.Position{X: 0, Y: 0}
 	mf       *minefield.Minefield
-	userQuit bool
+	userQuit = false
 
 	// demo
 	demoRNG   = rand.New(rand.NewSource(1))
@@ -26,6 +26,34 @@ var (
 	numMines = roundToNearest10th((numRows * numCols) / 5)
 	numRows  = 15
 )
+
+// Play starts the game.
+func Play() {
+	defer cleanup()
+	generateMineField()
+
+	// render forever in a separate routine
+	chStop := make(chan bool, 1)
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	go renderAsync(chStop, &wg)
+
+	for {
+		if mf.IsGameOver() || userQuit {
+			break
+		}
+
+		if *flagDemo {
+			demo()
+		} else {
+			getUserInput()
+		}
+	}
+
+	renderGame() // one final render
+	chStop <- true
+	wg.Wait()
+}
 
 func demo() {
 	moveAndDo := func(x, y int, f func(x, y int)) {
@@ -98,32 +126,4 @@ func getUserInput() {
 			handleActionInput(char)
 		}
 	}
-}
-
-// Play starts the game.
-func Play() {
-	defer cleanup()
-	generateMineField()
-
-	// render forever in a separate routine
-	chStop := make(chan bool, 1)
-	wg := sync.WaitGroup{}
-	wg.Add(1)
-	go renderAsync(chStop, &wg)
-
-	for {
-		if mf.IsGameOver() || userQuit {
-			break
-		}
-
-		if *flagDemo {
-			demo()
-		} else {
-			getUserInput()
-		}
-	}
-
-	renderGame() // one final render
-	chStop <- true
-	wg.Wait()
 }
