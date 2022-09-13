@@ -1,4 +1,4 @@
-package main
+package game
 
 import (
 	"math/rand"
@@ -15,6 +15,10 @@ var (
 	mf       *minefield.Minefield
 	userQuit bool
 
+	// demo
+	demoRNG   = rand.New(rand.NewSource(1))
+	demoSpeed = time.Second / 5
+
 	// configurations
 	maxCols  = 80
 	maxRows  = 40
@@ -22,6 +26,27 @@ var (
 	numMines = roundToNearest10th((numRows * numCols) / 5)
 	numRows  = 15
 )
+
+func demo() {
+	moveAndDo := func(x, y int, f func(x, y int)) {
+		moveCursorTo(x, y, demoSpeed/2)
+		f(x, y)
+		time.Sleep(demoSpeed)
+	}
+
+	for mf.NumMinesRemaining() > 0 {
+		val := demoRNG.Intn(*flagNumRows * *flagNumCols)
+		x, y := val/(*flagNumCols), val%(*flagNumCols)
+
+		if mf.HasMineAt(x, y) {
+			if mf.Grid[x][y] != minefield.Flagged {
+				moveAndDo(x, y, mf.Flag)
+			}
+		} else if mf.Grid[x][y] == minefield.Unknown {
+			moveAndDo(x, y, mf.Reveal)
+		}
+	}
+}
 
 func generateMineField() {
 	mf = minefield.New(
@@ -35,7 +60,10 @@ func generateMineField() {
 func getUserInput() {
 	char, key, err := keyboard.GetSingleKey()
 	if err != nil {
-		logErrorAndExit("failed to get input: %v", err)
+		return
+	}
+	if *flagDemo && key != keyboard.KeyEsc && key != keyboard.KeyCtrlC && char != 'q' && char != 'Q' {
+		return
 	}
 
 	switch key {
@@ -72,7 +100,11 @@ func getUserInput() {
 	}
 }
 
-func play() {
+// Play starts the game.
+func Play() {
+	defer cleanup()
+	generateMineField()
+
 	// render forever in a separate routine
 	chStop := make(chan bool, 1)
 	wg := sync.WaitGroup{}
@@ -84,8 +116,8 @@ func play() {
 			break
 		}
 
-		if *flagWin {
-			cheatAndWin()
+		if *flagDemo {
+			demo()
 		} else {
 			getUserInput()
 		}
@@ -94,24 +126,4 @@ func play() {
 	renderGame() // one final render
 	chStop <- true
 	wg.Wait()
-}
-
-func cheatAndWin() {
-	rng := rand.New(rand.NewSource(1))
-	interval := time.Second / 2
-
-	for mf.NumMinesRemaining() > 0 {
-		val := rng.Intn(*flagNumRows * *flagNumCols)
-		x, y := val/(*flagNumCols), val%(*flagNumCols)
-		cursor = minefield.Position{X: x, Y: y}
-		if mf.HasMineAt(x, y) {
-			if mf.Grid[x][y] != minefield.Flagged {
-				mf.Flag(x, y)
-				time.Sleep(interval)
-			}
-		} else if mf.Grid[x][y] == minefield.Unknown {
-			mf.Reveal(x, y)
-			time.Sleep(interval)
-		}
-	}
 }

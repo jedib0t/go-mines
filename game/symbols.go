@@ -1,4 +1,4 @@
-package main
+package game
 
 import "github.com/jedib0t/go-mines/minefield"
 
@@ -10,10 +10,10 @@ const (
 var (
 	symbolSelected = "⬛"
 	symbolStateMap = map[minefield.State]string{
-		minefield.Unknown: "⬜", // "⬛",
+		minefield.Unknown: "⬜",
 		minefield.Empty:   "  ",
 		minefield.Flagged: "🚩",
-		minefield.Boom:    "💥", // "🔥",
+		minefield.Boom:    "💥",
 	}
 	symbolNumberShadedMap = map[int]string{
 		0: "⬛",

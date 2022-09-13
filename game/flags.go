@@ -1,4 +1,4 @@
-package main
+package game
 
 import (
 	"flag"
@@ -9,13 +9,13 @@ import (
 )
 
 var (
+	flagDemo        = flag.Bool("demo", false, "Play automatically? (this cheats to win)")
 	flagHelp        = flag.Bool("help", false, "Show this help-text?")
 	flagNumCols     = flag.Int("cols", numRows, fmt.Sprintf("Number of Columns (max: %d)", maxCols))
 	flagNumMines    = flag.Int("mines", numMines, "Number of Mines (max: 50% of grid)")
 	flagNumRows     = flag.Int("rows", numCols, fmt.Sprintf("Number of Rows (max: %d)", maxRows))
 	flagRefreshRate = flag.Int("refresh-rate", 20, "Refresh-rate per second")
 	flagSeed        = flag.Int64("seed", 0, "Randomizer Seed value (will use current time if ZERO)")
-	flagWin         = flag.Bool("win", false, "Cheat and Win?")
 )
 
 func initFlags() {

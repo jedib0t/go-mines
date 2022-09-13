@@ -1,4 +1,4 @@
-package main
+package game
 
 import (
 	"fmt"
@@ -7,8 +7,8 @@ import (
 )
 
 func cleanupKeyboard() {
-	cursorShow()
 	_ = keyboard.Close()
+	cursorShow()
 }
 
 func cursorHide() {

@@ -1,4 +1,4 @@
-package main
+package game
 
 import (
 	"fmt"
@@ -85,7 +85,7 @@ func renderMineField() string {
 			numMinesAround := mf.NumMinesAround(x, y)
 
 			colStr := symbolStateMap[col]
-			if userQuit {
+			if userQuit && !mf.IsGameOver() {
 				if col == minefield.Flagged && !mf.HasMineAt(x, y) {
 					colStr = colorsFlaggedWrong.Sprint(symbolFlaggedWrong)
 				} else if mf.HasMineAt(x, y) {

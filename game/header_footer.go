@@ -1,4 +1,4 @@
-package main
+package game
 
 import (
 	"strings"
@@ -25,7 +25,6 @@ const (
 
 var (
 	colorKey   = text.Colors{text.Italic, text.FgWhite}
-	colorTimer = text.Colors{text.BgBlack, text.FgHiCyan}
 	colorTitle = []text.Color{
 		text.FgHiWhite,
 		text.FgHiYellow,
@@ -66,7 +65,7 @@ func initHeaderAndFooter() {
 }
 
 func renderFooter() string {
-	return colorKey.Sprint("flag: 🅕  | navigate: ▶ ▲ ▼ ◀  | reveal: <space> | quit: 🅠")
+	return colorKey.Sprint("flag: <F/f>  | navigate: ▶ ▲ ▼ ◀  | reveal: <space> | quit: <Q/q>")
 }
 
 func renderHeader() string {

@@ -11,7 +11,7 @@ default: run
 all: test
 
 build:
-	go build ./cmd/go-mines
+	go build .
 
 demo: build
 	./go-mines
@@ -21,7 +21,7 @@ dist:
 	    -os="linux darwin windows" \
 	    -arch="amd64" \
 	    -output="./dist/{{.Dir}}_{{.OS}}_{{.Arch}}" \
-	    ./cmd/go-mines
+	    .
 
 fmt: tidy
 	go fmt $(shell go list ./...)
@@ -37,7 +37,7 @@ run:
 	go run .
 
 test: fmt lint vet build
-	go test -cover -coverprofile=.coverprofile ./digital ./minefield
+	go test -cover -coverprofile=.coverprofile $(shell go list ./...)
 
 tidy:
 	go mod tidy
